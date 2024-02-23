@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { TimeProvider } from './Components/TimeContext'; // Note the named import
+import Home from './Components/Home';
+import Cancellation from './Components/Cancellation';
+import EmailTemplate from './Components/EmailTemplate';
+import AddEmail from './Components/AddEmail';
+import Navbar from './Components/Navbar';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <TimeProvider> {/* Use TimeProvider here */}
+        <Navbar/>
+        <Routes>
+          <Route path="/home" element={<Home />} />
+          <Route path="/cancellation" element={<Cancellation />} />
+          <Route path="/emailtemplate" element={<EmailTemplate />} />
+          <Route path="/addemail" element={<AddEmail />} />
+          {/* Additional routes */}
+        </Routes>
+      </TimeProvider>
+    </Router>
   );
 }
 
