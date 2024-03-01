@@ -1,6 +1,7 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Radio, RadioGroup, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Button, withStyles } from '@material-ui/core';
-import TimeContext from './TimeContext';
+// import TimeContext from './TimeContext';
+import moment from 'moment-timezone';
 // Initial mock data for the clients, with a 'time' field added
 const initialClients = [
   { id: 1, name: 'Internal stakeholders', zone: 'east', emailSent: 'NA', lastStatus: 'Planned', time: '12:00 PM' },
@@ -35,11 +36,25 @@ const EmailStatusLabel = withStyles({
 })(Button); // Using Button for the sake of visual consistency, but it's purely for label purposes here.
 
 const Home = () => {
-  const currentEstTime = useContext(TimeContext);
+  // const currentEstTime = useContext(TimeContext);
   // console.log(currentEstTime)
-  const [selectedZone, setSelectedZone] = useState('east');
-  const [clients, setClients] = useState(initialClients);
-  const [selectedClients, setSelectedClients] = useState([]);
+  const [selectedZone, setSelectedZone] = useState(() => localStorage.getItem('selectedZone') || 'east');
+  const [selectedClients, setSelectedClients] = useState(() => {
+    const saved = localStorage.getItem('selectedClients');
+    return saved ? JSON.parse(saved) : [];
+  });
+ 
+  const [clients, setClients] = useState(() => {
+    const savedClients = localStorage.getItem('clients');
+    return savedClients ? JSON.parse(savedClients) : initialClients;
+  });
+  useEffect(() => {
+    localStorage.setItem('selectedZone', selectedZone);
+    localStorage.setItem('selectedClients', JSON.stringify(selectedClients));
+    // Optionally, persist the clients if there's any change that should be retained across sessions
+    localStorage.setItem('clients', JSON.stringify(clients));
+  }, [selectedZone, selectedClients, clients]);
+
 
   const handleZoneChange = (event) => {
     setSelectedZone(event.target.value);
@@ -68,27 +83,40 @@ const Home = () => {
   };
 
   const isSelected = (id) => selectedClients.includes(id);
-
+  const getCurrentTime = () => {
+    // Format the current time as EST timezone in the specified format
+    const nowInEst = moment().tz('America/New_York').format(' hh:mm:ss A');
+    return nowInEst;
+  };
+  
   const updateClientStatus = (id, action) => {
+    const now = getCurrentTime(); // Get the current time with AM/PM
     const updatedClients = clients.map(client => {
-      if (client.id === id) {
-        switch (action) {
-          case 'send':
-            return { ...client, emailSent: 'Sent' };
-          case 'discard':
-            return { ...client, emailSent: 'Discarded' };
-          case 'reject':
-            return { ...client, emailSent: 'Rejected' };
-          case 'fetch':
-            return { ...client, emailSent: 'NA' };
-          default:
-            return client;
+        if (client.id === id) {
+            let updatedClient = { ...client };
+            switch (action) {
+              case 'send':
+                updatedClient.emailSent = 'Sent';
+                break;
+              case 'discard':
+                updatedClient.emailSent = 'Discarded';
+                break;
+              case 'reject':
+                updatedClient.emailSent = 'Rejected';
+                break;
+              case 'fetch':
+                updatedClient.emailSent = 'NA';
+                break;
+              default:
+                return client; // No need to modify the client if the action doesn't match
+            }
+            updatedClient.time = now; // Use the freshly fetched time with AM/PM
+            return updatedClient;
         }
-      }
-      return client;
+        return client;
     });
     setClients(updatedClients);
-  };
+};
 
   // Function to determine the label color based on the email status
   const getLabelColor = (emailSentStatus) => {
@@ -112,7 +140,8 @@ const Home = () => {
         <FormControlLabel value="west" control={<Radio />} label="West zone client" />
       </RadioGroup>
       <TableContainer component={Paper}>
-        <Table>
+        <Table style={{ tableLayout: 'fixed' }}>
+
           <TableHead>
             <StyledTableRow>
               <StyledTableCell padding="checkbox">
@@ -123,7 +152,7 @@ const Home = () => {
                 />
               </StyledTableCell>
               <StyledTableCell><b>Client Name</b></StyledTableCell>
-              <StyledTableCell><b>Time Stamp</b></StyledTableCell>
+              <StyledTableCell><b>Time Stamp - ET</b></StyledTableCell>
               <StyledTableCell><b>Last Status</b></StyledTableCell>
               <StyledTableCell colSpan={2}><b>Email Administration</b></StyledTableCell>
             </StyledTableRow>
@@ -136,7 +165,7 @@ const Home = () => {
                 case 'NA':
                   emailAdminContent = (
                     <>
-                      <EmailStatusLabel disabled color="default">Ready to send</EmailStatusLabel>
+                      <EmailStatusLabel disabled color="default">The Email is Ready to be sent</EmailStatusLabel>
                       <Button variant="contained" color="primary" onClick={() => updateClientStatus(client.id, 'send')} style={{ marginRight: '10px' }}>Send</Button>
                       <Button variant="contained" color="secondary" onClick={() => updateClientStatus(client.id, 'reject')}>Reject</Button>
                     </>
@@ -145,15 +174,15 @@ const Home = () => {
                 case 'Sent':
                   emailAdminContent = (
                     <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Sent successfully</EmailStatusLabel>
-                      <Button variant="contained" onClick={() => updateClientStatus(client.id, 'discard')}>Discard</Button>
+                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Sent Email Successfully</EmailStatusLabel>
+                      <Button variant="contained" onClick={() => updateClientStatus(client.id, 'discard')}>Disregard</Button>
                     </>
                   );
                   break;
                 case 'Discarded':
                   emailAdminContent = (
                     <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Disregarded</EmailStatusLabel>
+                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}> Disregard Email Sent</EmailStatusLabel>
                       <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
                     </>
                   );
@@ -161,7 +190,7 @@ const Home = () => {
                 case 'Rejected':
                   emailAdminContent = (
                     <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Rejected</EmailStatusLabel>
+                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Email Rejected</EmailStatusLabel>
                       <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
                     </>
                   );
@@ -184,7 +213,7 @@ const Home = () => {
                     <Checkbox checked={isItemSelected} />
                   </StyledTableCell>
                   <StyledTableCell>{client.name}</StyledTableCell>
-                  <StyledTableCell>{currentEstTime}</StyledTableCell>
+                  <StyledTableCell>{client.time}</StyledTableCell>
                   <StyledTableCell>{client.lastStatus}</StyledTableCell>
                   <StyledTableCell colSpan={2}>{emailAdminContent}</StyledTableCell>
                 </StyledTableRow>
