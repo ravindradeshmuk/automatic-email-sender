@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListIt
 import MenuIcon from '@mui/icons-material/Menu';
 import moment from 'moment-timezone';
 
-const Navbar = () => {
+const Navbar= () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -26,7 +26,7 @@ const Navbar = () => {
   const drawer = (
     <div>
       <List>
-        {['Home', 'Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
+        {['Home','Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
           <ListItem button component={Link} to={`/${text.toLowerCase()}`} key={text} onClick={handleDrawerToggle} sx={{ width: 'auto', justifyContent: 'center', bgcolor: 'inherit' }}>
             <ListItemText primary={text} sx={{ textAlign: 'center', color: '#fff !important' }} />
           </ListItem>
@@ -63,7 +63,7 @@ const Navbar = () => {
                 Automated Email Sender
               </Typography>
               <List style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                {['Home', 'Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
+                {['Home','Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
                   <ListItem button component={Link} to={`/${text.toLowerCase()}`} key={text} sx={{ color: '#fff !important', padding: '0 10px' }}>
                     <ListItemText primary={text} sx={{ color: '#fff !important', textAlign: 'center' }} />
                   </ListItem>
