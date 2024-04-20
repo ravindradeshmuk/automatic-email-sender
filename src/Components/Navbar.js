@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, useTheme, useMediaQuery } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Button, useTheme, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import moment from 'moment-timezone';
+import CreateUser from './CreateUser';
 
-const Navbar= () => {
+const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentEstDateTime, setCurrentEstDateTime] = useState('');
@@ -23,12 +25,18 @@ const Navbar= () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLoginDialogToggle = () => {
+    setLoginDialogOpen(!loginDialogOpen);
+  };
+
+  const pages = ['Home', 'SCM Tracker'];
+
   const drawer = (
     <div>
       <List>
-        {['Home','Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
-          <ListItem button component={Link} to={`/${text.toLowerCase()}`} key={text} onClick={handleDrawerToggle} sx={{ width: 'auto', justifyContent: 'center', bgcolor: 'inherit' }}>
-            <ListItemText primary={text} sx={{ textAlign: 'center', color: '#fff !important' }} />
+        {pages.map((text) => (
+          <ListItem button component={Link} to={`/${text.replace(/\s+/g, '').toLowerCase()}`} key={text} onClick={handleDrawerToggle}>
+            <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
@@ -37,8 +45,11 @@ const Navbar= () => {
 
   return (
     <div>
-      <AppBar position="static" sx={{ bgcolor: '#2F2257 !important', color: '#fff !important' }}>
-        <Toolbar>
+      <AppBar position="fixed" sx={{ bgcolor: '#2F2257', color: '#fff' }}>
+      <Toolbar>
+          <Typography sx={{ flexGrow: 1, textAlign: 'left' }}>
+            Date and Time (EST): {currentEstDateTime}
+          </Typography>
           {isMobile ? (
             <>
               <IconButton
@@ -50,26 +61,27 @@ const Navbar= () => {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" noWrap component="div" sx={{ color: '#fff !important', flexGrow: 1, textAlign: 'center' }}>
+              <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, textAlign: 'center', color: 'white' }}>
                 Automated Email Sender
               </Typography>
+              <Button color="inherit" onClick={handleLoginDialogToggle}>Login</Button>
             </>
           ) : (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <Typography sx={{ color: '#fff !important', fontSize: '20px' }}>
-                Date and Time (EST): {currentEstDateTime}
-              </Typography>
-              <Typography sx={{ color: '#fff !important', fontSize: '30px' }} variant="h6" noWrap component="div">
-                Automated Email Sender
-              </Typography>
-              <List style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                {['Home','Cancellation', 'EmailTemplate', 'AddEmail'].map((text) => (
-                  <ListItem button component={Link} to={`/${text.toLowerCase()}`} key={text} sx={{ color: '#fff !important', padding: '0 10px' }}>
-                    <ListItemText primary={text} sx={{ color: '#fff !important', textAlign: 'center' }} />
-                  </ListItem>
+            <>
+              <div style={{ display: 'flex', flexGrow: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant="h6" noWrap component="div" sx={{ textAlign: 'center', color: 'white' }}>
+                  Automated Email Sender
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', flexGrow: 1, justifyContent: 'flex-end', gap: '20px' }}>
+                {pages.map((text) => (
+                  <Button color="inherit" component={Link} to={`/${text.replace(/\s+/g, '').toLowerCase()}`} key={text}>
+                    {text}
+                  </Button>
                 ))}
-              </List>
-            </div>
+                <Button color="inherit" onClick={handleLoginDialogToggle}>Login</Button>
+              </div>
+            </>
           )}
         </Toolbar>
       </AppBar>
@@ -77,16 +89,13 @@ const Navbar= () => {
         variant="temporary"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240, bgcolor: '#2F2257 !important' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240, bgcolor: '#2F2257' },
         }}
       >
         {drawer}
       </Drawer>
+      <CreateUser isOpen={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} />
     </div>
   );
 };

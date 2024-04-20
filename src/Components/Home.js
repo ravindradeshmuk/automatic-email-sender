@@ -1,13 +1,8 @@
 import React, { useState, useEffect} from 'react';
-import { Radio, RadioGroup, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Button, withStyles } from '@material-ui/core';
-// import TimeContext from './TimeContext';
+import axios from 'axios';
 import moment from 'moment-timezone';
-// Initial mock data for the clients, with a 'time' field added
-const initialClients = [
-  { id: 1, name: 'Internal stakeholders', zone: 'east', emailSent: 'NA', lastStatus: 'Planned', time: '12:00 PM' },
-  { id: 2, name: 'Atlantic General', zone: 'east', emailSent: 'NA', lastStatus: 'Started', time: '1:00 PM' },
-  { id: 3, name: 'Baptist Healthcare', zone: 'west', emailSent: 'NA', lastStatus: 'Completed', time: '2:00 PM' },
-];
+import { Radio, RadioGroup, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Button,TextField, withStyles } from '@material-ui/core';
+
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -29,40 +24,86 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-const EmailStatusLabel = withStyles({
+const EmailStatusLabel = withStyles(() => ({
   root: {
     marginRight: '10px',
   },
-})(Button); // Using Button for the sake of visual consistency, but it's purely for label purposes here.
+}))(Button);
 
 const Home = () => {
-  // const currentEstTime = useContext(TimeContext);
-  // console.log(currentEstTime)
-  const [selectedZone, setSelectedZone] = useState(() => localStorage.getItem('selectedZone') || 'east');
+  const [selectedZone, setSelectedZone] = useState(localStorage.getItem('selectedZone') || 'east');
   const [selectedClients, setSelectedClients] = useState(() => {
     const saved = localStorage.getItem('selectedClients');
     return saved ? JSON.parse(saved) : [];
   });
- 
-  const [clients, setClients] = useState(() => {
-    const savedClients = localStorage.getItem('clients');
-    return savedClients ? JSON.parse(savedClients) : initialClients;
-  });
-  useEffect(() => {
-    localStorage.setItem('selectedZone', selectedZone);
-    localStorage.setItem('selectedClients', JSON.stringify(selectedClients));
-    // Optionally, persist the clients if there's any change that should be retained across sessions
-    localStorage.setItem('clients', JSON.stringify(clients));
-  }, [selectedZone, selectedClients, clients]);
+  const [clients, setClients] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
+
+  // Use useCallback to memoize debouncedSearch to avoid re-creating the function on every render.
+
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      let finalData = []; // Initialize finalData to be used outside of try-catch
+      try {
+        const { data } = await axios.get('https://autoapi.cardzpay.com/client/data/api/tableData?includeId=true');
+        console.log(data); // Debugging to check data structure
+        
+        const liveClients = data.filter(client => client["Live/Not Live"] === "Live");
+  
+        const internalStakeholders = liveClients.filter(client => 
+          client["Site Name"] === "Internal Stakeholders" && client["Time Zone Group"] === "Both"
+        );
+  
+        const zoneFilteredClients = liveClients.filter(client =>
+          (client["Time Zone Group"].toLowerCase() === selectedZone.toLowerCase() || client["Time Zone Group"] === "Both") &&
+          client["Site Name"] !== "Internal Stakeholders"
+        );
+  
+        const combinedClients = [...internalStakeholders, ...zoneFilteredClients];
+  
+        finalData = combinedClients.map(client => ({
+          id: client._id,
+          name: client["Site Name"],
+          zone: client["Time Zone Group"].toLowerCase(),
+          emailSent: 'NA',
+          lastStatus: 'Pending',
+          time: moment().tz('America/New_York').format('hh:mm A')
+        }));
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+  
+      // This filtering is now applied outside the try-catch block
+   
+      if (searchTerm) {
+        const searchTerms = searchTerm.split(';').map(term => term.trim().toLowerCase());
+        const filteredClients = finalData.filter(client =>
+          searchTerms.some(term => client.name.toLowerCase().includes(term))
+        );
+        console.log("Filtered clients:", filteredClients);
+        setClients(filteredClients);
+      } else {
+        setClients(finalData); // Set to finalData if no searchTerm
+      }
+    };
+  
+    fetchClients();
+  }, [selectedZone, searchTerm]); // Depend on selectedZone and searchTerm
+  
+  
 
   const handleZoneChange = (event) => {
     setSelectedZone(event.target.value);
+    localStorage.setItem('selectedZone', event.target.value);
   };
+  // console.log('Effect running for zone:', selectedZone, 'and searchTerm:', searchTerm);
+  // console.log('Filtered clients:', filteredClients);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelectedClients = clients.filter(client => client.zone === selectedZone).map(n => n.id);
+      const newSelectedClients = clients.map(n => n.id);
       setSelectedClients(newSelectedClients);
     } else {
       setSelectedClients([]);
@@ -80,45 +121,47 @@ const Home = () => {
     }
 
     setSelectedClients(newSelected);
+    localStorage.setItem('selectedClients', JSON.stringify(newSelected));
   };
 
   const isSelected = (id) => selectedClients.includes(id);
+
   const getCurrentTime = () => {
-    // Format the current time as EST timezone in the specified format
-    const nowInEst = moment().tz('America/New_York').format(' hh:mm:ss A');
+    const nowInEst = moment().tz('America/New_York').format('hh:mm A');
     return nowInEst;
   };
-  
+
   const updateClientStatus = (id, action) => {
-    const now = getCurrentTime(); // Get the current time with AM/PM
+    console.log("Updating status for client ID:", id);
+    const now = getCurrentTime();
     const updatedClients = clients.map(client => {
-        if (client.id === id) {
-            let updatedClient = { ...client };
-            switch (action) {
-              case 'send':
-                updatedClient.emailSent = 'Sent';
-                break;
-              case 'discard':
-                updatedClient.emailSent = 'Discarded';
-                break;
-              case 'reject':
-                updatedClient.emailSent = 'Rejected';
-                break;
-              case 'fetch':
-                updatedClient.emailSent = 'NA';
-                break;
-              default:
-                return client; // No need to modify the client if the action doesn't match
-            }
-            updatedClient.time = now; // Use the freshly fetched time with AM/PM
-            return updatedClient;
+      if (client.id === id) {
+        let updatedStatus = '';
+        switch (action) {
+          case 'send':
+            updatedStatus = 'Sent';
+            break;
+          case 'discard':
+            updatedStatus = 'Discarded';
+            break;
+          case 'reject':
+            updatedStatus = 'Rejected';
+            break;
+          case 'fetch':
+            updatedStatus = 'NA';
+            break;
+          default:
+            return client; // No change for default case
         }
-        return client;
+        return { ...client, emailSent: updatedStatus, time: now };
+      } else {
+        return client; // No change for other clients
+      }
     });
     setClients(updatedClients);
-};
+  };
+  
 
-  // Function to determine the label color based on the email status
   const getLabelColor = (emailSentStatus) => {
     switch (emailSentStatus) {
       case 'Sent':
@@ -132,6 +175,13 @@ const Home = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+
+
+
   return (
     <div>
       <h1>SCM Patching Notification</h1>
@@ -139,65 +189,74 @@ const Home = () => {
         <FormControlLabel value="east" control={<Radio />} label="East zone client" />
         <FormControlLabel value="west" control={<Radio />} label="West zone client" />
       </RadioGroup>
+      <TextField
+        fullWidth
+        label="Search Clients"
+        variant="outlined"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Search multiple clients with semicolon (;) delimiter"
+        style={{ marginBottom: '20px' }}
+      />
       <TableContainer component={Paper}>
-        <Table style={{ tableLayout: 'fixed' }}>
-
+        <Table>
           <TableHead>
             <StyledTableRow>
               <StyledTableCell padding="checkbox">
                 <Checkbox
-                  indeterminate={selectedClients.length > 0 && selectedClients.length < clients.filter(client => client.zone === selectedZone).length}
-                  checked={selectedClients.length === clients.filter(client => client.zone === selectedZone).length}
+                  indeterminate={selectedClients.length > 0 && selectedClients.length < clients.length}
+                  checked={selectedClients.length === clients.length && clients.length !== 0}
                   onChange={handleSelectAllClick}
                 />
+        
               </StyledTableCell>
               <StyledTableCell><b>Client Name</b></StyledTableCell>
               <StyledTableCell><b>Time Stamp - ET</b></StyledTableCell>
               <StyledTableCell><b>Last Status</b></StyledTableCell>
-              <StyledTableCell colSpan={2}><b>Email Administration</b></StyledTableCell>
+              <StyledTableCell><b>Email Administration</b></StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {clients.filter(client => client.zone === selectedZone).map((client) => {
-              const isItemSelected = isSelected(client.id);
-              let emailAdminContent;
-              switch (client.emailSent) {
-                case 'NA':
-                  emailAdminContent = (
-                    <>
-                      <EmailStatusLabel disabled color="default">The Email is Ready to be sent</EmailStatusLabel>
-                      <Button variant="contained" color="primary" onClick={() => updateClientStatus(client.id, 'send')} style={{ marginRight: '10px' }}>Send</Button>
-                      <Button variant="contained" color="secondary" onClick={() => updateClientStatus(client.id, 'reject')}>Reject</Button>
-                    </>
-                  );
-                  break;
-                case 'Sent':
-                  emailAdminContent = (
-                    <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Sent Email Successfully</EmailStatusLabel>
-                      <Button variant="contained" onClick={() => updateClientStatus(client.id, 'discard')}>Disregard</Button>
-                    </>
-                  );
-                  break;
-                case 'Discarded':
-                  emailAdminContent = (
-                    <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}> Disregard Email Sent</EmailStatusLabel>
-                      <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
-                    </>
-                  );
-                  break;
-                case 'Rejected':
-                  emailAdminContent = (
-                    <>
-                      <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Email Rejected</EmailStatusLabel>
-                      <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
-                    </>
-                  );
-                  break;
-                default:
-                  emailAdminContent = null;
-              }
+          {clients.map((client) => {
+    const isItemSelected = isSelected(client.id);
+     let emailAdminContent;
+            switch (client.emailSent) {
+      case 'NA':
+        emailAdminContent = (
+          <>
+            <EmailStatusLabel disabled color="default">The Email is Ready to be sent</EmailStatusLabel>
+            <Button variant="contained" color="primary" onClick={() => updateClientStatus(client.id, 'send')} style={{ marginRight: '10px' }}>Send</Button>
+            <Button variant="contained" color="secondary" onClick={() => updateClientStatus(client.id, 'reject')}>Reject</Button>
+          </>
+        );
+        break;
+      case 'Sent':
+        emailAdminContent = (
+          <>
+            <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Sent Email Successfully</EmailStatusLabel>
+            <Button variant="contained" onClick={() => updateClientStatus(client.id, 'discard')}>Disregard</Button>
+          </>
+        );
+        break;
+      case 'Discarded':
+        emailAdminContent = (
+          <>
+            <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Disregard Email Sent</EmailStatusLabel>
+            <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
+          </>
+        );
+        break;
+      case 'Rejected':
+        emailAdminContent = (
+          <>
+            <EmailStatusLabel disabled color={getLabelColor(client.emailSent)}>Email Rejected</EmailStatusLabel>
+            <Button variant="contained" onClick={() => updateClientStatus(client.id, 'fetch')}>Fetch</Button>
+          </>
+        );
+        break;
+      default:
+        emailAdminContent = null;
+    }
 
               return (
                 <StyledTableRow
@@ -215,7 +274,7 @@ const Home = () => {
                   <StyledTableCell>{client.name}</StyledTableCell>
                   <StyledTableCell>{client.time}</StyledTableCell>
                   <StyledTableCell>{client.lastStatus}</StyledTableCell>
-                  <StyledTableCell colSpan={2}>{emailAdminContent}</StyledTableCell>
+                  <StyledTableCell>{emailAdminContent}</StyledTableCell>
                 </StyledTableRow>
               );
             })}

@@ -38,20 +38,24 @@ const useStyles = makeStyles({
     <List>
       <ListItem button component={Link} to="/admindashboard/updateheading">
         <ListItemIcon><DashboardIcon /></ListItemIcon>
-        <ListItemText primary="AddMoreHeading" />
+        <ListItemText primary="Add More Heading" />
       </ListItem>
       <ListItem button onClick={() => handleNavigation('/admindashboard/addclient')}>
         <ListItemIcon><AccountCircleIcon /></ListItemIcon>
         <ListItemText primary="AddClient" />
       </ListItem>
       
-      <ListItem button onClick={() => handleNavigation('/admindashboard/not-found')}>
+      <ListItem button onClick={() => handleNavigation('/admindashboard/template')}>
         <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
-        <ListItemText primary="Not Found" />
+        <ListItemText primary="Template" />
       </ListItem>
-      <ListItem button onClick={() => handleNavigation('/admindashboard/service-fee')}>
+      <ListItem button onClick={() => handleNavigation('/admindashboard/updateresourse')}>
         <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
-        <ListItemText primary="service fee" />
+        <ListItemText primary="Update Resource" />
+      </ListItem>
+      <ListItem button onClick={() => handleNavigation('/admindashboard/update-template')}>
+        <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
+        <ListItemText primary="Get Template" />
       </ListItem>
     </List>
   </Drawer>

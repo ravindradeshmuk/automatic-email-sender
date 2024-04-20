@@ -18,7 +18,7 @@ const UserRoutes = () => {
        <Navbar/>
         <Routes>
           <Route path="/home" element={<Home />} />
-          <Route path="/teblecompo" element={<TableComponent/>} />
+          <Route path="/scmtracker" element={<TableComponent/>} />
           <Route path="/cancellation" element={<Cancellation />} />
           <Route path="/emailtemplate" element={<EmailTemplate />} />
           <Route path="/addemail" element={<AddEmail />} />

@@ -11,7 +11,7 @@ export const TimeProvider = ({ children }) => {
 
   useEffect(() => {
     const tick = () => {
-      const nowInEst = moment.tz('America/New_York').format('HH:mm:ss');
+      const nowInEst = moment.tz('America/New_York').format('HH:mm');
       setCurrentEstDateTime(nowInEst);
     };
 

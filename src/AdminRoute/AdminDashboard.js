@@ -5,6 +5,9 @@ import AdminHeader from './AdminHeader';
 import SidebarAdmin from './SidebarAdmin';
 import UpdateHeading from './UpdateHeading';
 import AddClient from './AddClient';
+import UpdateResource from './UpdateResource';
+import EmailTemplate from './EmailTemplate';
+import UpdateTemplate from './UpdateTemplate';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,6 +38,9 @@ export default function AdminDashboard() {
           {/* Define your admin routes here */}
           <Route path="updateheading" element={<UpdateHeading />} exact />
           <Route path="addclient" element={<AddClient />} exact />
+          <Route path="updateresourse" element={<UpdateResource/>} exact />
+          <Route path="template" element={<EmailTemplate/>} exact />
+          <Route path="update-template" element={<UpdateTemplate/>} exact />
           {/* Add more routes as needed */}
         </Routes>
       </main>

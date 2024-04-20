@@ -54,7 +54,7 @@ const AddClient = () => {
         return acc;
       }, {});
   
-      const response = await fetch('http://localhost:3000/api/user/clients', {
+      const response = await fetch('https://autoapi.cardzpay.com/api/user/clients', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

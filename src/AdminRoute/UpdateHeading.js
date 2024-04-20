@@ -24,7 +24,7 @@ const UpdateHeading = () => {
      options
     };
     try {
-      await axios.post('http://localhost:3000/api/user/api/data', dataToSend);
+      await axios.post('https://autoapi.cardzpay.com/api/user/api/data', dataToSend);
       alert('Data submitted successfully!');
     } catch (error) {
       console.error('Error submitting data:', error);

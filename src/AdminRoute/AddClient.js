@@ -22,27 +22,28 @@ const useStyles = makeStyles((theme) => ({
 const AddClient = () => {
   const classes = useStyles();
   const [formData, setFormData] = useState({
-    'Data Center': '',
-    'Live/Not Live': '',
-    'Time Zone Group': '',
-    'Site Name': '',
-    'Code': '',
-    'SQL Configuration': '',
-    'Assigned Resource': '',
-    'SCM App Group 1 START': '',
-    'SCM App Group 2 - Complete': '',
-    'SCM App Group 2 - Complete (Enter EST Time in 24h format)':'',
-    'SUN Component App Group Complete':'',
+    'Read Only': 'No',
+        'Data Center': 'Azure',
+        'Live/Not Live': 'Live',
+        'Time Zone Group': 'West',
+        'Site Name': '',
+        'Code': '',
+        'SQL Configuration': 'AO - 3 Replicas',
+        'Assigned Resource': '',
+        'SCM App Group 1 START': 'Pending',
+        'SCM App Group 2 - Complete': 'Pending',
+        'SCM App Group 2 - Complete (Enter EST Time in 24h format)':'',
+    'SUN Component App Group Complete':'Pending',
     'Patch Reboots Complete (Enter EST Time in 24h format)':'',
-    'Patch/Reboots Complete':'',
-    'C:/drive cleanup (Cleanup on all servers including Gold Images)':'',
-    'Citrix Infra Validation':'',
-    'SCM App Validation':'',
-'DB Validation':'',
-'Monitoring ISS/E-Link Validation':'',
-'Monitoring Alerts Validation	':'',
-'Maintenance Mode Disabled':'',
-'Azure VM State Check':'',
+    'Patch/Reboots Complete':'Pending',
+    'C:/drive cleanup (Cleanup on all servers including Gold Images)':'Pending',
+    'Citrix Infra Validation':'Pending',
+     'SCM App Validation':'Pending',
+    'DB Validation':'Pending',
+    'Monitoring ISS/E-Link Validation':'Pending',
+    'Monitoring Alerts Validation	':'Pending',
+    'Maintenance Mode Disabled':'Pending',
+    'Azure VM State Check':'Pending',
   
   });
   const [error, setError] = useState('');
@@ -52,8 +53,8 @@ const AddClient = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // e.preventDefault();
     try {
       const numericFields = [
       'SCM App Group 2 - Complete (Enter EST Time in 24h format)',
@@ -77,7 +78,7 @@ const AddClient = () => {
 
     // Construct data to be sent to the server
     const postData = { ...formData };
-      const response = await fetch('http://localhost:3000/api/user/clients', {
+      const response = await fetch('https://autoapi.cardzpay.com/api/user/clients', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,27 +91,28 @@ const AddClient = () => {
       }
   
       setFormData({
-        'Data Center': '',
-        'Live/Not Live': '',
-        'Time Zone Group': '',
+        'Read Only': 'No',
+        'Data Center': 'Azure',
+        'Live/Not Live': 'Live',
+        'Time Zone Group': 'West',
         'Site Name': '',
         'Code': '',
-        'SQL Configuration': '',
+        'SQL Configuration': 'AO - 3 Replicas',
         'Assigned Resource': '',
-        'SCM App Group 1 START': '',
-        'SCM App Group 2 - Complete': '',
+        'SCM App Group 1 START': 'Pending',
+        'SCM App Group 2 - Complete': 'Pending',
         'SCM App Group 2 - Complete (Enter EST Time in 24h format)':'',
-    'SUN Component App Group Complete':'',
+    'SUN Component App Group Complete':'Pending',
     'Patch Reboots Complete (Enter EST Time in 24h format)':'',
-    'Patch/Reboots Complete':'',
-    'C:/drive cleanup (Cleanup on all servers including Gold Images)':'',
-    'Citrix Infra Validation':'',
-     'SCM App Validation':'',
-    'DB Validation':'',
-    'Monitoring ISS/E-Link Validation':'',
-    'Monitoring Alerts Validation	':'',
-    'Maintenance Mode Disabled':'',
-    'Azure VM State Check':'',
+    'Patch/Reboots Complete':'Pending',
+    'C:/drive cleanup (Cleanup on all servers including Gold Images)':'Pending',
+    'Citrix Infra Validation':'Pending',
+     'SCM App Validation':'Pending',
+    'DB Validation':'Pending',
+    'Monitoring ISS/E-Link Validation':'Pending',
+    'Monitoring Alerts Validation	':'Pending',
+    'Maintenance Mode Disabled':'Pending',
+    'Azure VM State Check':'Pending',
   
       });
   
