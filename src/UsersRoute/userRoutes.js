@@ -2,12 +2,13 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom';
 import { TimeProvider } from '../Components/TimeContext';
 import Home from '../Components/Home';
-import Cancellation from '../Components/Cancellation';
+
 import EmailTemplate from '../Components/EmailTemplate';
 import AddEmail from '../Components/AddEmail';
 // import Navbar from '../Components/Navbar';
 import Navbar from '../Components/Navbar';
 import TableComponent from '../Components/TableComponent';
+// import SignupPage from '../Components/SignUp';
 
 
 
@@ -19,7 +20,7 @@ const UserRoutes = () => {
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/scmtracker" element={<TableComponent/>} />
-          <Route path="/cancellation" element={<Cancellation />} />
+          {/* <Route path="/signup" element={< SignupPage/>} /> */}
           <Route path="/emailtemplate" element={<EmailTemplate />} />
           <Route path="/addemail" element={<AddEmail />} />
           

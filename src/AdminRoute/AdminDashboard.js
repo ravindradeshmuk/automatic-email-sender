@@ -8,6 +8,9 @@ import AddClient from './AddClient';
 import UpdateResource from './UpdateResource';
 import EmailTemplate from './EmailTemplate';
 import UpdateTemplate from './UpdateTemplate';
+import SignUpData from './SignUpData';
+import AllUser from './AllUser';
+import PendingUser from './PendingUser';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -41,6 +44,9 @@ export default function AdminDashboard() {
           <Route path="updateresourse" element={<UpdateResource/>} exact />
           <Route path="template" element={<EmailTemplate/>} exact />
           <Route path="update-template" element={<UpdateTemplate/>} exact />
+          <Route path="sign-up-data" element={<SignUpData/>} exact />
+          <Route path="all-user" element={<AllUser/>} exact />
+          <Route path="pending-user" element={<PendingUser/>} exact />
           {/* Add more routes as needed */}
         </Routes>
       </main>

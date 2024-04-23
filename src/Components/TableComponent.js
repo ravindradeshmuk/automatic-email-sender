@@ -300,9 +300,9 @@ const handleDropdownChange = async (event, rowIndex, columnName) => {
   // Function to dynamically apply header cell style based on column name
   const getHeaderCellStyle = (heading) => {
     switch(heading) {
+      case 'Monitoring Alerts Validation ':
       case 'Monitoring ISS/E-Link Validation':
-      case 'Monitoring Alerts Validation':
-      case 'Maintenance Mode Disabled':
+     case 'Maintenance Mode Disabled':
         return { backgroundColor: '#F56E7B', color: '#000000', fontWeight: 'bold', textAlign: 'center', border: '1px solid black' };
       case 'DB Validation':
         return { backgroundColor: '#707CF1', color: '#000000', fontWeight: 'bold', textAlign: 'center', border: '1px solid black' }; // Check this color, seems like a typo

@@ -198,7 +198,7 @@ const Home = () => {
         placeholder="Search multiple clients with semicolon (;) delimiter"
         style={{ marginBottom: '20px' }}
       />
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{margin:'20px,0,0,0'}}>
         <Table>
           <TableHead>
             <StyledTableRow>

@@ -57,6 +57,18 @@ const useStyles = makeStyles({
         <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
         <ListItemText primary="Get Template" />
       </ListItem>
+      <ListItem button onClick={() => handleNavigation('/admindashboard/sign-up-data')}>
+        <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
+        <ListItemText primary="User Data" />
+      </ListItem>
+      <ListItem button onClick={() => handleNavigation('/admindashboard/all-user')}>
+        <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
+        <ListItemText primary="All User" />
+      </ListItem>
+       <ListItem button onClick={() => handleNavigation('/admindashboard/pending-user')}>
+        <ListItemIcon><ErrorOutlineIcon /></ListItemIcon>
+        <ListItemText primary="Pending User" />
+      </ListItem>
     </List>
   </Drawer>
 );
