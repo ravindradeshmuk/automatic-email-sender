@@ -22,9 +22,18 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     position: 'fixed',
     zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: '#393392',
+    color: 'white',
+    height: '98px',
+    padding: '16px 20px 10px 0px',
   },
   title: {
     flexGrow: 1,
+    marginLeft: '12px',
+    '&:hover': {
+      color: '#f56e7b', // Text color becomes pink on hover
+    },
+
   },
   search: {
     position: 'relative',
@@ -67,9 +76,17 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
     },
   },
+  LogoutButton: {
+    backgroundColor: '#f56e7b',
+    borderRadius: '2px',
+    padding: '6px 20px',
+    '&:hover': {
+      backgroundColor: "#ab4d56", // Change to a darker shade of the primary color
+    },
+  },
 }));
 
-export default function  AdminHeader() {
+export default function AdminHeader() {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -82,7 +99,8 @@ export default function  AdminHeader() {
   return (
     <div className={classes.root}>
       <AppBar className={classes.appBar}>
-        <Toolbar>
+        <Toolbar className='my-4 mx-20'>
+          <img src="/AWhite.png" alt="Altera Logo" style={{ marginRight: '10px', width: 120, }} />
           <Typography variant="h6" className={classes.title}>
             Admin Dashboard
           </Typography>
@@ -99,26 +117,26 @@ export default function  AdminHeader() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton color="inherit">
-            <LanguageIcon />
-          </IconButton>
-          <IconButton color="inherit">
-            <AccountCircleIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={handleLogout}>
-            <Typography variant="body1">
-              Logout
-            </Typography>
-          </IconButton>
+          <div className=''>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton color="inherit" style={{ padding: 0 }}>
+              <LanguageIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <AccountCircleIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={handleLogout} className={classes.LogoutButton} >
+              <Typography variant="body1">
+                Logout
+              </Typography>
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
     </div>
   );
 }
-
-

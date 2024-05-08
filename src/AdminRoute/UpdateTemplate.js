@@ -53,7 +53,7 @@
                 console.log('Delete', id);
             };
             return (
-                <TableContainer component={Paper} style={{ marginTop: '50px' }}>
+                <TableContainer component={Paper} style={{margin: '110px 20px 20px 20px', }}>
                     <Table>
                         <TableHead>
                             <TableRow>

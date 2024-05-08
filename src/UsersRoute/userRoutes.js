@@ -10,13 +10,15 @@ import Navbar from '../Components/Navbar';
 import TableComponent from '../Components/TableComponent';
 // import SignupPage from '../Components/SignUp';
 
-
+ import {TeamProvider} from '../Components/TeamProvider';
 
 const UserRoutes = () => {
   return (
    
     <TimeProvider>
-       <Navbar/>
+     <TeamProvider>
+      <Navbar />
+   
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/scmtracker" element={<TableComponent/>} />
@@ -25,6 +27,7 @@ const UserRoutes = () => {
           <Route path="/addemail" element={<AddEmail />} />
           
         </Routes>
+        </TeamProvider>
       </TimeProvider>
     
   )

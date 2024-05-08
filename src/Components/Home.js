@@ -5,14 +5,21 @@ import { Radio, RadioGroup, FormControlLabel, Table, TableBody, TableCell, Table
 
 
 const StyledTableCell = withStyles((theme) => ({
+  emailAdminColumn: {
+    width: '33%', // Adjust the width as per your desired size
+  },
   head: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
-    border: '1px solid #ddd',
+    backgroundColor: "#151744",
+    color: '#fff',
+    border: '1px solid black',
+    textAlign: 'center'
   },
   body: {
     fontSize: 14,
-    border: '1px solid #ddd',
+    border: '1px solid black',
+    padding: '8px', // Adjust padding
+    textAlign: 'center',
+
   },
 }))(TableCell);
 
@@ -179,7 +186,17 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
-
+  const handleSendEmail = async (id) => {
+    try {
+      // Make a POST request to your backend API endpoint
+      const response = await axios.post('http://localhost:3000/user/mail/send-email', { itemId: id });
+      console.log('Email sent successfully:', response.data);
+      // Update client status to 'Sent' after email is sent
+      updateClientStatus(id, 'send');
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
 
 
   return (
@@ -198,7 +215,7 @@ const Home = () => {
         placeholder="Search multiple clients with semicolon (;) delimiter"
         style={{ marginBottom: '20px' }}
       />
-      <TableContainer component={Paper} style={{margin:'20px,0,0,0'}}>
+      <TableContainer component={Paper} yuh>
         <Table>
           <TableHead>
             <StyledTableRow>
@@ -225,7 +242,7 @@ const Home = () => {
         emailAdminContent = (
           <>
             <EmailStatusLabel disabled color="default">The Email is Ready to be sent</EmailStatusLabel>
-            <Button variant="contained" color="primary" onClick={() => updateClientStatus(client.id, 'send')} style={{ marginRight: '10px' }}>Send</Button>
+            <Button variant="contained" color="primary"  onClick={() => handleSendEmail(client.id)} style={{ marginRight: '10px' }}>Send</Button>
             <Button variant="contained" color="secondary" onClick={() => updateClientStatus(client.id, 'reject')}>Reject</Button>
           </>
         );

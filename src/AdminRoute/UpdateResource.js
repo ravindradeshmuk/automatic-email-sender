@@ -23,59 +23,66 @@ const UpdateResource = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   const handleSave = async () => {
     try {
       const updatedResource = { 'Assigned Resource': editData['Assigned Resource'] };
-  
+
       // Ensure editData._id is not undefined
       if (!editData._id) {
         console.error('ID is undefined.');
         return;
       }
-  
+
       await axios.patch(`https://autoapi.cardzpay.com/client/data/updateAssignedResource/${editData._id}`, updatedResource);
-  
+
       const updatedData = data.map(item => {
         if (item._id === editData._id) {
           return { ...item, 'Assigned Resource': editData['Assigned Resource'] };
         }
         return item;
       });
-  
+
       setData(updatedData);
       setOpen(false); // Assuming this is meant to close a modal or similar
     } catch (error) {
       console.error('Error updating data:', error);
     }
   };
-  
-  
+
+
 
   return (
     <>
-      <TableContainer component={Paper} style={{ marginTop: '50px' }}>
+      <TableContainer component={Paper} style={{ marginTop: '100px', maxWidth: '650px', marginLeft: '200px', marginRight: '200px' }}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Site Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Assigned Resource</TableCell>
+            <TableRow style={{ backgroundColor: '#151744' }}>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#fff' }}>Site Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#fff' }}>Assigned Resource</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody style={{ backgroundColor: '' }} >
             {data.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row['Site Name']}</TableCell>
                 <TableCell>
-                  {row['Assigned Resource']}
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    style={{ marginLeft: '10px' }}
-                    onClick={() => { setOpen(true); setEditData(row); }}
-                  >
-                    Edit
-                  </Button>
+                  <div style={{display:'flex',alignItems:'left'}}>
+                    <div style={{ flex: 1,marginLeft:'0px' }}>
+                      {row['Assigned Resource']}
+                    </div>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{
+                        marginRight: '40px'
+
+                      }}
+                      onClick={() => { setOpen(true); setEditData(row); }}
+                    >
+                      Edit
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

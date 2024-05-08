@@ -120,7 +120,7 @@ const EmailTemplate = () => {
  
 
   return (
-    <div className="email-template-container" style={{ marginTop: '50px' }}>
+    <div className="email-template-container" style={{ marginTop: '120px'}}>
       <div className="section-selection">
         <div className="clients-section">
           <h3>Clients :</h3>

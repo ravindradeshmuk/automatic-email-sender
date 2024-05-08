@@ -32,21 +32,24 @@ const UpdateHeading = () => {
   };
 
   return (
-    <div style={{ marginTop: 60, background: '#f9f9f9', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '150px', borderRadius: '5px' }}>
-    <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ marginTop: 90, background: '#f9f9f9', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '0px 30px 0px 30px ', borderRadius: '5px',
+    marginLeft: '200px', // Shift to left side of the screen
+    marginRight: '200px', // Shift to left side of the screen
+    maxWidth: '600px' }}>
+    <form style={{ display: 'flex', flexDirection: 'column' }}>
     <h2 id="heading-label">Add Header</h2>
     <TextField
-          label="Add heading"
+    label="Type here or select below"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           margin="normal"
         />
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth >
           <h2 id="heading-label">Drop Down Option</h2>
          
         </FormControl>
-        <FormControl component="fieldset" margin="normal">
+        <FormControl component="fieldset" >
           <FormGroup>
             <FormControlLabel
               control={<Checkbox checked={options.pending} onChange={handleChange} name="pending" />}
@@ -78,8 +81,8 @@ const UpdateHeading = () => {
             />
           </FormGroup>
         </FormControl>
-        <Button variant="contained"style={{ marginTop: '100px', alignSelf: 'flex-end' }} onClick={handleSubmit}>Submit</Button>
-      </form>
+        <Button variant="contained"style={{ margin: '10px', alignSelf: 'flex-end'}} onClick={handleSubmit}>Submit</Button>
+   </form>
     </div>
   );
 };

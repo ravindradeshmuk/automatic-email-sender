@@ -3,8 +3,8 @@ import { TextField, Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
-    marginTop: 40,
-    padding: theme.spacing(2), // Add padding
+    margin: '110px 200px 20px 200px',
+    padding: theme.spacing(3), // Add padding
     boxShadow: '0px 0px 10px 2px rgba(0,0,0,0.1)', // Add shadow
     backgroundColor: '#fff', // Add background color
     borderRadius: 8, // Add border radius for rounded corners
@@ -44,6 +44,7 @@ const AddClient = () => {
     'Monitoring Alerts Validation	':'Pending',
     'Maintenance Mode Disabled':'Pending',
     'Azure VM State Check':'Pending',
+    'Azure Gold Image Compliance Status':'Pending',
   
   });
   const [error, setError] = useState('');
@@ -113,7 +114,7 @@ const AddClient = () => {
     'Monitoring Alerts Validation	':'Pending',
     'Maintenance Mode Disabled':'Pending',
     'Azure VM State Check':'Pending',
-  
+    'Azure Gold Image Compliance Status':'Pending',
       });
   
       const data = await response.json();
